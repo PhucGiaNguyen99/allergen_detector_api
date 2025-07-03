@@ -3,4 +3,12 @@ from rapidfuzz import fuzz
 from nltk.corpus import wordnet
 import nltk
 
+# Download the WordNet for symnonym lookup
+nltk.download('wordnet')
 
+class AllergenDetector:
+    def __init__(self):
+        # Load the small English spaCy model for tokenization and NLP
+        self.nlp = spacy.load("en_core_web_sm")
+
+    
