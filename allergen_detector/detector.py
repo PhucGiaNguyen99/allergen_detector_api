@@ -27,3 +27,10 @@ class AllergenDetector:
                 name = lemma.name().lower().replace("_", " ")
                 lemmas.add(name)
         return lemmas
+    
+    def get_synonyms(self, word):
+        """
+        Full synonym pipeline: get WordNet synsets and extract all synonyms.
+        """
+        synsets = self.get_wordnet_synsets(word)
+        return self.extract_lemmas_from_synsets(synsets)
