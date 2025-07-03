@@ -11,4 +11,8 @@ class AllergenDetector:
         # Load the small English spaCy model for tokenization and NLP
         self.nlp = spacy.load("en_core_web_sm")
 
-    
+    def get_wordnet_synsets(self, word):
+        """
+        Get all WordNet synsets (meanings) for a given word.
+        """
+        return wordnet.synsets(word)
