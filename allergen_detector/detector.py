@@ -34,3 +34,47 @@ class AllergenDetector:
         """
         synsets = self.get_wordnet_synsets(word)
         return self.extract_lemmas_from_synsets(synsets)
+    
+    def match_allergens(self, ingredients, allergens):
+        """
+        Main logic for matching allergens in ingredient strings using:
+        - Exact match
+        - Fuzzy string match (e.g., 'milkk' matches 'milk')
+        - Token-based fuzzy match
+        - Synonym expansion
+        """
+        detected = set()
+
+
+        # Build a map: allergen -> set of variants (synonyms + itself)
+        allergen_map = {}
+        for allergen in allergens:
+            allergen_lower = allergen.lower()
+            synonym_set = self.get_synonyms(allergen_lower)
+            synonym_set.add(allergen_lower)  # include the original word
+            allergen_map[allergen_lower] = synonym_set
+
+
+        # Loop through each ingredient string
+        for ingredient in ingredients:
+            ingredient = ingredient.lower()
+            doc = self.nlp(ingredient)  # Convert to a Doc object
+
+
+            # Compare each allergen variant against the ingredient string
+            for allergen, variants in allergen_map.items():
+                for variant in variants:
+                    # Exact substring match
+                    if variant in ingredient:
+                        detected.add(allergen)
+                    # Fuzzy match on full string
+                    elif fuzz.partial_ratio(variant, ingredient) > 85:
+                        detected.add(allergen)
+                    else:
+                        # Fuzzy match at token (word) level
+                        for token in doc:
+                            if fuzz.ratio(variant, token.text) > 85:
+                                detected.add(allergen)
+
+
+        return list(detected)
