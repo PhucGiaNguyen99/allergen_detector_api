@@ -16,3 +16,14 @@ class AllergenDetector:
         Get all WordNet synsets (meanings) for a given word.
         """
         return wordnet.synsets(word)
+    
+    def extract_lemmas_from_synsets(self, synsets):
+        """
+        Extract lemma names from the given list of synsets.
+        """
+        lemmas = set()
+        for syn in synsets:
+            for lemma in syn.lemmas():
+                name = lemma.name().lower().replace("_", " ")
+                lemmas.add(name)
+        return lemmas
